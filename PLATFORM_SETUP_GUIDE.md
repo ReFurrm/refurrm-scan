@@ -1,20 +1,20 @@
 # Platform Setup Guide for refurrm.app
 
-## 🎯 Quick Start: Vercel Deployment (5 Minutes)
+## Quick Start (Vercel, ~5 minutes)
 
 ### Prerequisites
-- GitHub account with ReFURRM repository
-- Domain refurrm.app purchased and accessible
+- GitHub account with the ReFURRM repository
+- Domain `refurrm.app` purchased and accessible
 - Supabase project running
-- Stripe account set up
+- Stripe account set up (only if you need payments)
 
 ---
 
-## STEP-BY-STEP: VERCEL SETUP
+## Option A: Vercel (recommended)
 
-### 1. Initial Deployment (2 minutes)
+### 1. Deploy the project
 
-**A. Connect Repository**
+**A. Connect the repository**
 ```
 1. Visit https://vercel.com/new
 2. Click "Import Git Repository"
@@ -22,53 +22,53 @@
 4. Click "Import"
 ```
 
-**B. Configure Build Settings**
+**B. Build settings (Vite)**
 - Framework Preset: **Vite** (auto-detected)
-- Build Command: `npm run build` (auto-filled)
-- Output Directory: `dist` (auto-filled)
-- Install Command: `npm install` (auto-filled)
+- Build Command: `npm run build`
+- Output Directory: `dist`
+- Install Command: `npm install`
 
 **C. Deploy**
 - Click **"Deploy"**
 - Wait ~90 seconds
-- You'll get a URL like: `refurrm.vercel.app`
+- You will get a temporary URL like: `refurrm.vercel.app`
 
-### 2. Environment Variables (1 minute)
+### 2. Add environment variables
 
-Navigate to: **Dashboard → Your Project → Settings → Environment Variables**
+Go to: **Dashboard -> Your Project -> Settings -> Environment Variables**
 
-Add these variables:
+Add these:
 
 | Name | Value | Environment |
 |------|-------|-------------|
 | `VITE_SUPABASE_URL` | `https://lpfiiycqgykyuzjbwikt.supabase.co` | Production, Preview, Development |
 | `VITE_SUPABASE_ANON_KEY` | `sb_publishable_9lSqpifpi9ulkMMkuVGa3w_xQBM0d5k` | Production, Preview, Development |
-| `VITE_STRIPE_PUBLISHABLE_KEY` | `pk_live_YOUR_KEY` | Production only |
+| `VITE_STRIPE_PUBLISHABLE_KEY` | `pk_live_YOUR_KEY` | Production |
 | `VITE_STRIPE_PUBLISHABLE_KEY` | `pk_test_YOUR_KEY` | Preview, Development |
 
-**Important**: Click "Save" after each variable.
+Notes:
+- Use the same variable name for Stripe; Vercel lets you set different values per environment.
+- Click **Save** after each variable.
 
-After adding all variables, trigger a new deployment:
-- Go to **Deployments** tab
-- Click ⋯ on latest deployment
-- Select **"Redeploy"**
+Redeploy after adding variables:
+- Go to **Deployments**
+- Click the "..." menu on the latest deployment
+- Select **Redeploy**
 
-### 3. Custom Domain Setup (2 minutes)
+### 3. Connect your custom domain
 
-**A. Add Domain in Vercel**
+**A. Add domain in Vercel**
 ```
-1. Go to: Settings → Domains
+1. Go to Settings -> Domains
 2. Click "Add"
 3. Enter: refurrm.app
 4. Click "Add"
 5. Also add: www.refurrm.app
 ```
 
-**B. Configure DNS at Your Registrar**
+**B. Configure DNS at your registrar**
 
-Vercel will show you DNS records. Go to your domain registrar (Namecheap, GoDaddy, Cloudflare, etc.) and add:
-
-**For Apex Domain (refurrm.app):**
+For apex domain (`refurrm.app`):
 ```
 Type: A
 Name: @
@@ -76,7 +76,7 @@ Value: 76.76.21.21
 TTL: 3600
 ```
 
-**For WWW Subdomain:**
+For `www`:
 ```
 Type: CNAME
 Name: www
@@ -84,23 +84,21 @@ Value: cname.vercel-dns.com
 TTL: 3600
 ```
 
-**C. Wait for DNS Propagation**
-- Usually takes 10-30 minutes
-- Can take up to 48 hours in rare cases
+**C. Wait for DNS propagation**
+- Usually 10-30 minutes (up to 48 hours)
 - Check status: https://www.whatsmydns.net/#A/refurrm.app
 
-**D. SSL Certificate**
-- Vercel automatically provisions SSL
-- Your site will be available at https://refurrm.app
-- HTTP automatically redirects to HTTPS
+**D. SSL**
+- Vercel provisions SSL automatically
+- Your site will be live at `https://refurrm.app`
 
 ---
 
-## ALTERNATIVE: NETLIFY SETUP
+## Option B: Netlify (alternative)
 
 ### 1. Deploy to Netlify
 
-**Option A: GitHub Integration**
+**Option A: GitHub integration**
 ```
 1. Go to https://app.netlify.com/start
 2. Click "Import from Git"
@@ -112,7 +110,7 @@ TTL: 3600
 6. Click "Deploy site"
 ```
 
-**Option B: Manual Deploy**
+**Option B: Manual deploy**
 ```bash
 # Build locally
 npm run build
@@ -121,16 +119,16 @@ npm run build
 # Drag and drop the 'dist' folder
 ```
 
-### 2. Environment Variables
+### 2. Environment variables
 
-Navigate to: **Site settings → Environment variables**
+Go to: **Site settings -> Environment variables**
 
-Add the same variables as Vercel (see above).
+Add the same variables listed in the Vercel section.
 
-### 3. Custom Domain on Netlify
+### 3. Custom domain on Netlify
 
 ```
-1. Go to: Site settings → Domain management
+1. Go to Site settings -> Domain management
 2. Click "Add custom domain"
 3. Enter: refurrm.app
 4. Netlify provides nameservers:
@@ -144,7 +142,7 @@ Add the same variables as Vercel (see above).
 
 ---
 
-## SUPABASE EDGE FUNCTIONS DEPLOYMENT
+## Supabase Edge Functions (only if you use subscriptions)
 
 ### 1. Install Supabase CLI
 
@@ -164,19 +162,16 @@ scoop install supabase
 npm install -g supabase
 ```
 
-### 2. Login and Link Project
+### 2. Login and link the project
 
 ```bash
-# Login to Supabase
 supabase login
-
-# Link to your project
 supabase link --project-ref lpfiiycqgykyuzjbwikt
 ```
 
 ### 3. Create Edge Functions
 
-Create these files in your project:
+Create these files:
 
 **supabase/functions/create-pro-subscription/index.ts**
 ```typescript
@@ -288,7 +283,7 @@ supabase secrets set STRIPE_WEBHOOK_SECRET=whsec_YOUR_WEBHOOK_SECRET
 
 ---
 
-## STRIPE WEBHOOK CONFIGURATION
+## Stripe Webhook Configuration
 
 ### 1. Get Webhook URL
 ```
@@ -303,12 +298,12 @@ https://lpfiiycqgykyuzjbwikt.supabase.co/functions/v1/stripe-webhook
 3. Endpoint URL: [paste URL above]
 4. Description: ReFURRM Production Webhook
 5. Events to send:
-   ✓ checkout.session.completed
-   ✓ customer.subscription.created
-   ✓ customer.subscription.updated
-   ✓ customer.subscription.deleted
-   ✓ invoice.payment_succeeded
-   ✓ invoice.payment_failed
+   - checkout.session.completed
+   - customer.subscription.created
+   - customer.subscription.updated
+   - customer.subscription.deleted
+   - invoice.payment_succeeded
+   - invoice.payment_failed
 6. Click "Add endpoint"
 7. Copy the "Signing secret" (whsec_...)
 8. Add to Supabase secrets (see step 5 above)
@@ -316,7 +311,7 @@ https://lpfiiycqgykyuzjbwikt.supabase.co/functions/v1/stripe-webhook
 
 ---
 
-## 🎉 LAUNCH CHECKLIST
+## Launch Checklist
 
 - [ ] Vercel deployment successful
 - [ ] Environment variables configured
@@ -332,4 +327,4 @@ https://lpfiiycqgykyuzjbwikt.supabase.co/functions/v1/stripe-webhook
 
 ---
 
-**Your ReFURRM platform is now live at https://refurrm.app! 🚀**
+**Your ReFURRM platform is now live at https://refurrm.app.**
